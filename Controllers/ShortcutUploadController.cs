@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SleepHQImporter.Client;
+using System.Threading;
 using Uplink.Applications.Websites.CorporateSites.UplinkBg.Services;
 
 namespace Uplink.Applications.Websites.CorporateSites.UplinkBg.Controllers;
@@ -21,10 +22,18 @@ public sealed class ShortcutUploadController : ControllerBase
         ISleepHQClient sleepHQClient,
         ILogger<ShortcutUploadController> logger)
     {
-        this._configuration = configuration;
-        this._storage = storage;
-        this._sleepHQClient = sleepHQClient;
-        this._logger = logger;
+        _configuration = configuration;
+        _storage = storage;
+        _sleepHQClient = sleepHQClient;
+        _logger = logger;
+    }
+
+    [HttpGet("status")]
+    public async Task<IActionResult> Status(CancellationToken cancellationToken)
+    {
+        var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
+
+        return Ok(new { status = "ok" });
     }
 
     [HttpPost("upload")]
@@ -46,9 +55,6 @@ public sealed class ShortcutUploadController : ControllerBase
             _logger.LogWarning("Shortcut upload rejected: no files received.");
             return BadRequest(new { error = "No files received." });
         }
-
-        var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
-
 
         IReadOnlyList<ShortcutUploadStorage.SavedFile> saved;
         try

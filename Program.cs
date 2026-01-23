@@ -6,10 +6,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<ShortcutUploadStorage>();
 
+// Configure SleepHQ options from configuration
+builder.Services.Configure<SleepHQOptions>(
+    builder.Configuration.GetSection(SleepHQOptions.SectionName));
+
+// Register token service with its own HttpClient
+builder.Services.AddHttpClient<ISleepHQTokenService, SleepHQTokenService>();
+
+// Register auth handler
+builder.Services.AddTransient<SleepHQAuthHandler>();
+
+// Register SleepHQ client with auth handler
 builder.Services.AddHttpClient<ISleepHQClient, SleepHQClient>(client =>
 {
     client.BaseAddress = new Uri("https://sleephq.com/api");
-});
+})
+.AddHttpMessageHandler<SleepHQAuthHandler>();
 
 builder.Services.AddControllers();
 
