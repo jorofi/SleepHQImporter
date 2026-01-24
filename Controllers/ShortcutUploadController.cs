@@ -72,7 +72,7 @@ public sealed class ShortcutUploadController : ControllerBase
         var import = await _sleepHQClient.PostV1TeamsTeamIdImportsAsync(
             meData.Data.Current_team_id.Value, 
             null, 
-            4678013, 
+            4678013, //Prisma A20 Device ID
             "Data import iOS Shortcuts",
             cancellationToken);
         
