@@ -1,4 +1,4 @@
-namespace SleepHQImporter.Client;
+﻿namespace SleepHQImporter.Client;
 
 public class SleepHQOptions
 {

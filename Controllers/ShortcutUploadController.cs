@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SleepHQImporter.Client;
 using System.IO.Compression;
 using System.Security.Cryptography;
