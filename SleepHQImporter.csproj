@@ -7,4 +7,10 @@
     <UserSecretsId>172fa02a-744a-40de-8e0a-2941093edfe9</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Update="sleephq_api.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
