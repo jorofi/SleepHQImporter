@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="SleepHQImporter.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="sleephq_api.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>

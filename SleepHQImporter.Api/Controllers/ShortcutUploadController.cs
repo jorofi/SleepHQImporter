@@ -171,7 +171,7 @@ public sealed class ShortcutUploadController : ControllerBase
     /// <param name="stream">The file stream.</param>
     /// <param name="fileName">The file name.</param>
     /// <returns>The MD5 hash as a lowercase hexadecimal string.</returns>
-    private static string CalculateContentHash(Stream stream, string fileName)
+    internal static string CalculateContentHash(Stream stream, string fileName)
     {
         using var reader = new StreamReader(stream, Encoding.Latin1, leaveOpen: true);
         var fileText = reader.ReadToEnd();
