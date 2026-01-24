@@ -1547,128 +1547,39 @@
     }
   },
   "definitions": {
-    "Api_V1_UserSerializer": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
+  "Api_V1_UserSerializer": {
+    "type": "object",
+    "properties": {
+      "data": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "current_team_id": {
+            "type": "integer"
+          },
+          "profile_photo_url": {
+            "type": "string"
+          },
+          "owned_team_ids": {
+            "type": "array",
+            "items": {
               "type": "integer"
-            },
-            "type": {
-              "type": "string"
-            },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "first_name": {
-                  "type": "string"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "time_zone": {
-                  "type": "string"
-                },
-                "created_at": {
-                  "type": "datetime"
-                },
-                "updated_at": {
-                  "type": "datetime"
-                }
-              }
-            },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "teams": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer"
-                          },
-                          "type": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "memberships": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer"
-                          },
-                          "type": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
             }
           },
-          "example": {
-            "id": 1,
-            "type": "user",
-            "attributes": {
-              "id": 7446907882,
-              "email": "autem",
-              "name": "quo",
-              "first_name": "commodi",
-              "last_name": "minima",
-              "time_zone": "alias",
-              "created_at": "2026-01-23 23:07:58 UTC",
-              "updated_at": "2026-01-23 23:07:58 UTC"
-            },
-            "relationships": {
-              "teams": {
-                "data": [
-                  {
-                    "id": 1,
-                    "type": "teams"
-                  }
-                ]
-              },
-              "memberships": {
-                "data": [
-                  {
-                    "id": 1,
-                    "type": "memberships"
-                  }
-                ]
-              }
-            }
+          "name": {
+            "type": "string"
           }
         }
-      },
-      "description": "Api_V1_UserSerializer model"
+      }
     },
-    "Api_V1_JournalSerializer": {
+    "description": "Api_V1_UserSerializer model"
+  },
+  "Api_V1_JournalSerializer": {
       "type": "object",
       "properties": {
         "data": {

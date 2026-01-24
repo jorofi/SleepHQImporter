@@ -4229,14 +4229,20 @@ namespace SleepHQImporter.Client
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public int? Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes Attributes { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("current_team_id")]
+        public int? Current_team_id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("relationships")]
-        public Relationships Relationships { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("profile_photo_url")]
+        public string Profile_photo_url { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("owned_team_ids")]
+        public System.Collections.Generic.ICollection<int> Owned_team_ids { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
     }
 
@@ -4251,7 +4257,7 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes2 Attributes { get; set; }
+        public Attributes Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
         public object Relationships { get; set; }
@@ -4269,10 +4275,10 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes3 Attributes { get; set; }
+        public Attributes2 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
-        public Relationships2 Relationships { get; set; }
+        public Relationships Relationships { get; set; }
 
     }
 
@@ -4287,7 +4293,7 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes4 Attributes { get; set; }
+        public Attributes3 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
         public object Relationships { get; set; }
@@ -4305,10 +4311,10 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes5 Attributes { get; set; }
+        public Attributes4 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
-        public Relationships3 Relationships { get; set; }
+        public Relationships2 Relationships { get; set; }
 
     }
 
@@ -4323,7 +4329,7 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes6 Attributes { get; set; }
+        public Attributes5 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
         public object Relationships { get; set; }
@@ -4341,10 +4347,10 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes7 Attributes { get; set; }
+        public Attributes6 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
-        public Relationships4 Relationships { get; set; }
+        public Relationships3 Relationships { get; set; }
 
     }
 
@@ -4359,7 +4365,7 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes8 Attributes { get; set; }
+        public Attributes7 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
         public object Relationships { get; set; }
@@ -4377,7 +4383,7 @@ namespace SleepHQImporter.Client
         public string Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("attributes")]
-        public Attributes9 Attributes { get; set; }
+        public Attributes8 Attributes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("relationships")]
         public object Relationships { get; set; }
@@ -4386,48 +4392,6 @@ namespace SleepHQImporter.Client
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Attributes
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public int? Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("email")]
-        public string Email { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("first_name")]
-        public string First_name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("last_name")]
-        public string Last_name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("time_zone")]
-        public string Time_zone { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("created_at")]
-        public object Created_at { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("updated_at")]
-        public object Updated_at { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Relationships
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("teams")]
-        public Teams Teams { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("memberships")]
-        public Memberships Memberships { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4463,7 +4427,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes3
+    public partial class Attributes2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4484,7 +4448,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Relationships2
+    public partial class Relationships
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("machines")]
@@ -4493,7 +4457,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes4
+    public partial class Attributes3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4523,7 +4487,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes5
+    public partial class Attributes4
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4565,7 +4529,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Relationships3
+    public partial class Relationships2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("files")]
@@ -4574,7 +4538,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes6
+    public partial class Attributes5
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4616,7 +4580,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes7
+    public partial class Attributes6
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4649,7 +4613,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Relationships4
+    public partial class Relationships3
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("machines")]
@@ -4658,7 +4622,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes8
+    public partial class Attributes7
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4718,7 +4682,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Attributes9
+    public partial class Attributes8
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -4736,7 +4700,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Teams
+    public partial class Machines
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
@@ -4745,7 +4709,7 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Memberships
+    public partial class Files
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
@@ -4754,29 +4718,11 @@ namespace SleepHQImporter.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Machines
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<Data11> Data { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Files
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<Data12> Data { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Machines2
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<Data13> Data { get; set; }
+        public System.Collections.Generic.ICollection<Data11> Data { get; set; }
 
     }
 
@@ -4806,30 +4752,6 @@ namespace SleepHQImporter.Client
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Data11
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public int? Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Data12
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public int? Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
-        public string Type { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Data13
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]

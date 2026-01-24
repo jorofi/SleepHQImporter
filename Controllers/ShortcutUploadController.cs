@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SleepHQImporter.Client;
-using System.Threading;
+using System.Security.Cryptography;
+using System.Text;
 using Uplink.Applications.Websites.CorporateSites.UplinkBg.Services;
 
 namespace Uplink.Applications.Websites.CorporateSites.UplinkBg.Controllers;
@@ -28,18 +29,10 @@ public sealed class ShortcutUploadController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("status")]
-    public async Task<IActionResult> Status(CancellationToken cancellationToken)
-    {
-        var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
-        
-        return Ok(meData);
-    }
-
     [HttpPost("upload")]
     [RequestSizeLimit(50L * 1024L * 1024L)]
     public async Task<IActionResult> Upload(
-        [FromForm(Name = "files")] Microsoft.AspNetCore.Http.IFormFile[] files,
+        [FromForm(Name = "files")] IFormFile[] files,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Shortcut upload request started. FileCount={FileCount}", files?.Length ?? 0);
@@ -56,24 +49,52 @@ public sealed class ShortcutUploadController : ControllerBase
             return BadRequest(new { error = "No files received." });
         }
 
-        IReadOnlyList<ShortcutUploadStorage.SavedFile> saved;
-        try
+        var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
+        if(meData is null)
         {
-            saved = await _storage.SaveAsync(files, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Shortcut upload failed while saving files. FileCount={FileCount}", files.Length);
-            throw;
+            _logger.LogWarning("SleepHQ /me request failed.");
+            return StatusCode(502, new { error = "Failed to retrieve user data from SleepHQ." });
         }
 
-        _logger.LogInformation("Shortcut upload completed. SavedCount={SavedCount}", saved.Count);
-
-        return Ok(new
+        if(meData.Data.Current_team_id is null)
         {
-            count = saved.Count,
-            files = saved.Select(f => new { originalName = f.OriginalName, savedName = f.SavedName })
-        });
+            _logger.LogWarning("SleepHQ /me response missing Current_team_id.");
+            return StatusCode(502, new { error = "User data from SleepHQ is missing team information." });
+        }
+
+        var import = await _sleepHQClient.PostV1TeamsTeamIdImportsAsync(meData.Data.Current_team_id.Value, null, 4678013, "Data import iOS Shortcuts");
+        
+        if(import is null)
+        {
+            _logger.LogWarning("SleepHQ /teams/{TeamId}/imports request failed.", meData.Data.Current_team_id.Value);
+            return StatusCode(502, new { error = "Failed to create import session in SleepHQ." });
+        }
+
+        if(import.Data.Id is null)
+        {
+            _logger.LogWarning("SleepHQ /teams/{TeamId}/imports response missing import ID.", meData.Data.Current_team_id.Value);
+            return StatusCode(502, new { error = "Import session data from SleepHQ is missing import ID." });
+        }
+
+        // Upload each file with content hash
+        foreach (var file in files)
+        {
+            using var stream = file.OpenReadStream();
+            var contentHash = CalculateContentHash(stream, file.FileName);
+            var fileParameter = new FileParameter(stream, file.FileName, file.ContentType);
+            
+            await _sleepHQClient.PostV1ImportsImportIdFilesAsync(
+                import.Data.Id.Value,
+                file.FileName,
+                "./",
+                fileParameter,
+                contentHash,
+                cancellationToken);
+        }
+
+        await _sleepHQClient.PostV1ImportsIdProcessFilesAsync(import.Data.Id.Value, cancellationToken);
+
+        return Ok(meData);
     }
 
     private bool IsAuthorized()
@@ -92,5 +113,22 @@ public sealed class ShortcutUploadController : ControllerBase
         }
 
         return string.Equals(expected, provided.ToString(), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Calculates the SleepHQ content hash for a file from a stream.
+    /// The hash is computed as MD5 of the file content (read as Latin1) concatenated with the lowercase filename, encoded as UTF-8.
+    /// </summary>
+    /// <param name="stream">The file stream.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>The MD5 hash as a lowercase hexadecimal string.</returns>
+    private static string CalculateContentHash(Stream stream, string fileName)
+    {
+        using var reader = new StreamReader(stream, Encoding.Latin1, leaveOpen: true);
+        var fileText = reader.ReadToEnd();
+        var input = fileText + fileName.ToLowerInvariant();
+        var hashBytes = MD5.HashData(Encoding.UTF8.GetBytes(input));
+        stream.Position = 0; // Reset stream position for subsequent reads
+        return Convert.ToHexString(hashBytes).ToLowerInvariant();
     }
 }
