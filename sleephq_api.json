@@ -917,10 +917,10 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/Api_V1_ImportSerializer"
+              "$ref": "#/definitions/Api_V1_ProcessFilesResponse"
             }
           },
           "400": {
@@ -1547,6 +1547,15 @@
     }
   },
   "definitions": {
+    "Api_V1_ProcessFilesResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        }
+      },
+      "description": "Process files response model"
+    },
   "Api_V1_UserSerializer": {
     "type": "object",
     "properties": {
@@ -1810,7 +1819,7 @@
           "type": "object",
           "properties": {
             "id": {
-              "type": "integer"
+              "type": "string"
             },
             "type": {
               "type": "string"
@@ -1828,7 +1837,7 @@
                   "type": "string"
                 },
                 "status": {
-                  "type": "integer"
+                  "type": "string"
                 },
                 "file_size": {
                   "type": "integer"
@@ -1849,10 +1858,10 @@
                   "type": "string"
                 },
                 "created_at": {
-                  "type": "datetime"
+                  "type": "string"
                 },
                 "updated_at": {
-                  "type": "datetime"
+                  "type": "string"
                 }
               }
             },
@@ -1868,7 +1877,7 @@
                         "type": "object",
                         "properties": {
                           "id": {
-                            "type": "integer"
+                            "type": "string"
                           },
                           "type": {
                             "type": "string"
@@ -1878,34 +1887,6 @@
                     }
                   }
                 }
-              }
-            }
-          },
-          "example": {
-            "id": 1,
-            "type": "import",
-            "attributes": {
-              "id": 9035409025,
-              "team_id": 7091574222,
-              "name": "laudantium",
-              "status": 3105011624,
-              "file_size": 2832604014,
-              "progress": 5303253573,
-              "machine_id": 8307929920,
-              "device_id": 4385385683,
-              "programatic": true,
-              "failed_reason": "nobis",
-              "created_at": "2026-01-23 23:07:58 UTC",
-              "updated_at": "2026-01-23 23:07:58 UTC"
-            },
-            "relationships": {
-              "files": {
-                "data": [
-                  {
-                    "id": 1,
-                    "type": "files"
-                  }
-                ]
               }
             }
           }
@@ -1920,7 +1901,7 @@
           "type": "object",
           "properties": {
             "id": {
-              "type": "integer"
+              "type": "string"
             },
             "type": {
               "type": "string"
@@ -1956,40 +1937,15 @@
                   "type": "string"
                 },
                 "created_at": {
-                  "type": "datetime"
+                  "type": "string"
                 },
                 "updated_at": {
-                  "type": "datetime"
+                  "type": "string"
                 },
                 "download_url": {
                   "type": "string"
                 }
               }
-            },
-            "relationships": {
-              "type": "object",
-              "properties": {
-              }
-            }
-          },
-          "example": {
-            "id": 1,
-            "type": "imports/file",
-            "attributes": {
-              "id": 3431808117,
-              "added_by_id": 3870021807,
-              "added_by_type": "architecto",
-              "content_hash": "atque",
-              "team_id": 5928368439,
-              "name": "praesentium",
-              "path": "asperiores",
-              "size": 2890963061,
-              "fingerprint_base64": "et",
-              "created_at": "2026-01-23 23:07:58 UTC",
-              "updated_at": "2026-01-23 23:07:58 UTC",
-              "download_url": "et"
-            },
-            "relationships": {
             }
           }
         }

@@ -82,11 +82,13 @@ public sealed class ShortcutUploadController : ControllerBase
             return StatusCode(502, new { error = "Failed to create import session in SleepHQ." });
         }
 
-        if (import.Data.Id is null)
+        if (import.Data?.Attributes?.Id is null)
         {
             _logger.LogWarning("SleepHQ /teams/{TeamId}/imports response missing import ID.", meData.Data.Current_team_id.Value);
             return StatusCode(502, new { error = "Import session data from SleepHQ is missing import ID." });
         }
+
+        var importId = import.Data.Attributes.Id.Value;
 
         // Extract ZIP and upload each file to SleepHQ
         var uploadedFiles = new List<string>();
@@ -119,7 +121,7 @@ public sealed class ShortcutUploadController : ControllerBase
                 }
 
                 await _sleepHQClient.PostV1ImportsImportIdFilesAsync(
-                    import.Data.Id.Value,
+                    importId,
                     entry.Name,
                     relativePath,
                     fileParameter,
@@ -131,14 +133,14 @@ public sealed class ShortcutUploadController : ControllerBase
         }
 
         _logger.LogInformation("Uploaded {FileCount} files from ZIP to SleepHQ import {ImportId}.", 
-            uploadedFiles.Count, import.Data.Id.Value);
+            uploadedFiles.Count, importId);
 
         // Trigger file processing
-        await _sleepHQClient.PostV1ImportsIdProcessFilesAsync(import.Data.Id.Value, cancellationToken);
+        await _sleepHQClient.PostV1ImportsIdProcessFilesAsync(importId, cancellationToken);
 
         return Ok(new
         {
-            importId = import.Data.Id.Value,
+            importId = importId,
             filesUploaded = uploadedFiles.Count,
             files = uploadedFiles
         });
