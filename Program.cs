@@ -19,7 +19,7 @@ builder.Services.AddTransient<SleepHQAuthHandler>();
 // Register SleepHQ client with auth handler
 builder.Services.AddHttpClient<ISleepHQClient, SleepHQClient>(client =>
 {
-    client.BaseAddress = new Uri("https://sleephq.com/api");
+    client.BaseAddress = new Uri("https://sleephq.com/api/");
 })
 .AddHttpMessageHandler<SleepHQAuthHandler>();
 

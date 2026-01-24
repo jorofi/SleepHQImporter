@@ -32,8 +32,8 @@ public sealed class ShortcutUploadController : ControllerBase
     public async Task<IActionResult> Status(CancellationToken cancellationToken)
     {
         var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
-
-        return Ok(new { status = "ok" });
+        
+        return Ok(meData);
     }
 
     [HttpPost("upload")]
