@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SleepHQImporter.Client;
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using Uplink.Applications.Websites.CorporateSites.UplinkBg.Services;
@@ -32,10 +33,10 @@ public sealed class ShortcutUploadController : ControllerBase
     [HttpPost("upload")]
     [RequestSizeLimit(50L * 1024L * 1024L)]
     public async Task<IActionResult> Upload(
-        [FromForm(Name = "files")] IFormFile[] files,
+        [FromForm(Name = "file")] IFormFile file,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Shortcut upload request started. FileCount={FileCount}", files?.Length ?? 0);
+        _logger.LogInformation("Shortcut upload request started.");
 
         if (!IsAuthorized())
         {
@@ -43,58 +44,104 @@ public sealed class ShortcutUploadController : ControllerBase
             return Unauthorized();
         }
 
-        if (files is null || files.Length == 0)
+        if (file is null || file.Length == 0)
         {
-            _logger.LogWarning("Shortcut upload rejected: no files received.");
-            return BadRequest(new { error = "No files received." });
+            _logger.LogWarning("Shortcut upload rejected: no file received.");
+            return BadRequest(new { error = "No file received." });
+        }
+
+        if (!file.FileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning("Shortcut upload rejected: file is not a ZIP archive.");
+            return BadRequest(new { error = "File must be a ZIP archive." });
         }
 
         var meData = await _sleepHQClient.GetV1MeAsync(cancellationToken);
-        if(meData is null)
+        if (meData is null)
         {
             _logger.LogWarning("SleepHQ /me request failed.");
             return StatusCode(502, new { error = "Failed to retrieve user data from SleepHQ." });
         }
 
-        if(meData.Data.Current_team_id is null)
+        if (meData.Data.Current_team_id is null)
         {
             _logger.LogWarning("SleepHQ /me response missing Current_team_id.");
             return StatusCode(502, new { error = "User data from SleepHQ is missing team information." });
         }
 
-        var import = await _sleepHQClient.PostV1TeamsTeamIdImportsAsync(meData.Data.Current_team_id.Value, null, 4678013, "Data import iOS Shortcuts");
+        var import = await _sleepHQClient.PostV1TeamsTeamIdImportsAsync(
+            meData.Data.Current_team_id.Value, 
+            null, 
+            4678013, 
+            "Data import iOS Shortcuts",
+            cancellationToken);
         
-        if(import is null)
+        if (import is null)
         {
             _logger.LogWarning("SleepHQ /teams/{TeamId}/imports request failed.", meData.Data.Current_team_id.Value);
             return StatusCode(502, new { error = "Failed to create import session in SleepHQ." });
         }
 
-        if(import.Data.Id is null)
+        if (import.Data.Id is null)
         {
             _logger.LogWarning("SleepHQ /teams/{TeamId}/imports response missing import ID.", meData.Data.Current_team_id.Value);
             return StatusCode(502, new { error = "Import session data from SleepHQ is missing import ID." });
         }
 
-        // Upload each file with content hash
-        foreach (var file in files)
+        // Extract ZIP and upload each file to SleepHQ
+        var uploadedFiles = new List<string>();
+        using (var zipStream = file.OpenReadStream())
+        using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
         {
-            using var stream = file.OpenReadStream();
-            var contentHash = CalculateContentHash(stream, file.FileName);
-            var fileParameter = new FileParameter(stream, file.FileName, file.ContentType);
-            
-            await _sleepHQClient.PostV1ImportsImportIdFilesAsync(
-                import.Data.Id.Value,
-                file.FileName,
-                "./",
-                fileParameter,
-                contentHash,
-                cancellationToken);
+            foreach (var entry in archive.Entries)
+            {
+                // Skip directories (entries with empty names or ending with /)
+                if (string.IsNullOrEmpty(entry.Name) || entry.FullName.EndsWith('/'))
+                {
+                    continue;
+                }
+
+                _logger.LogDebug("Processing ZIP entry: {EntryName}, Path: {EntryPath}", entry.Name, entry.FullName);
+
+                using var entryStream = entry.Open();
+                using var memoryStream = new MemoryStream();
+                await entryStream.CopyToAsync(memoryStream, cancellationToken);
+                memoryStream.Position = 0;
+
+                var contentHash = CalculateContentHash(memoryStream, entry.Name);
+                var fileParameter = new FileParameter(memoryStream, entry.Name);
+
+                // Preserve the relative path from the ZIP (use ./ prefix as SleepHQ expects)
+                var relativePath = "./" + Path.GetDirectoryName(entry.FullName)?.Replace('\\', '/');
+                if (!relativePath.EndsWith('/'))
+                {
+                    relativePath += "/";
+                }
+
+                await _sleepHQClient.PostV1ImportsImportIdFilesAsync(
+                    import.Data.Id.Value,
+                    entry.Name,
+                    relativePath,
+                    fileParameter,
+                    contentHash,
+                    cancellationToken);
+
+                uploadedFiles.Add(entry.FullName);
+            }
         }
 
+        _logger.LogInformation("Uploaded {FileCount} files from ZIP to SleepHQ import {ImportId}.", 
+            uploadedFiles.Count, import.Data.Id.Value);
+
+        // Trigger file processing
         await _sleepHQClient.PostV1ImportsIdProcessFilesAsync(import.Data.Id.Value, cancellationToken);
 
-        return Ok(meData);
+        return Ok(new
+        {
+            importId = import.Data.Id.Value,
+            filesUploaded = uploadedFiles.Count,
+            files = uploadedFiles
+        });
     }
 
     private bool IsAuthorized()
