@@ -1,12 +1,15 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Uplink.Applications.Websites.CorporateSites.UplinkBg.Controllers;
 
 namespace SleepHQImporter.Tests;
 
+[TestClass]
 public class ShortcutUploadControllerTests
 {
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_ReturnsExpectedHash_ForSimpleContent()
     {
         // Arrange
@@ -20,10 +23,10 @@ public class ShortcutUploadControllerTests
         // Assert
         var expectedInput = content + fileName.ToLowerInvariant();
         var expectedHash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(expectedInput))).ToLowerInvariant();
-        Assert.Equal(expectedHash, hash);
+        Assert.AreEqual(expectedHash, hash);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_ReturnsLowercaseHexString()
     {
         // Arrange
@@ -35,11 +38,11 @@ public class ShortcutUploadControllerTests
         var hash = ShortcutUploadController.CalculateContentHash(stream, fileName);
 
         // Assert
-        Assert.Equal(hash, hash.ToLowerInvariant());
-        Assert.Matches("^[0-9a-f]{32}$", hash);
+        Assert.AreEqual(hash, hash.ToLowerInvariant());
+        Assert.IsTrue(Regex.IsMatch(hash, "^[0-9a-f]{32}$"));
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_ConvertsFileNameToLowercase()
     {
         // Arrange
@@ -54,10 +57,10 @@ public class ShortcutUploadControllerTests
         var hashLower = ShortcutUploadController.CalculateContentHash(stream2, lowerFileName);
 
         // Assert
-        Assert.Equal(hashLower, hashUpper);
+        Assert.AreEqual(hashLower, hashUpper);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_ResetsStreamPosition()
     {
         // Arrange
@@ -69,10 +72,10 @@ public class ShortcutUploadControllerTests
         _ = ShortcutUploadController.CalculateContentHash(stream, fileName);
 
         // Assert
-        Assert.Equal(0, stream.Position);
+        Assert.AreEqual(0L, stream.Position);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_HandlesEmptyContent()
     {
         // Arrange
@@ -86,10 +89,10 @@ public class ShortcutUploadControllerTests
         // Assert
         var expectedInput = content + fileName.ToLowerInvariant();
         var expectedHash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(expectedInput))).ToLowerInvariant();
-        Assert.Equal(expectedHash, hash);
+        Assert.AreEqual(expectedHash, hash);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_HandlesSpecialCharactersInFileName()
     {
         // Arrange
@@ -103,10 +106,10 @@ public class ShortcutUploadControllerTests
         // Assert
         var expectedInput = content + fileName.ToLowerInvariant();
         var expectedHash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(expectedInput))).ToLowerInvariant();
-        Assert.Equal(expectedHash, hash);
+        Assert.AreEqual(expectedHash, hash);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_HandlesBinaryContent()
     {
         // Arrange
@@ -118,11 +121,10 @@ public class ShortcutUploadControllerTests
         var hash = ShortcutUploadController.CalculateContentHash(stream, fileName);
 
         // Assert
-        // Verify it returns a valid 32-character hex string
-        Assert.Matches("^[0-9a-f]{32}$", hash);
+        Assert.IsTrue(Regex.IsMatch(hash, "^[0-9a-f]{32}$"));
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_DifferentContentProducesDifferentHash()
     {
         // Arrange
@@ -135,10 +137,10 @@ public class ShortcutUploadControllerTests
         var hash2 = ShortcutUploadController.CalculateContentHash(stream2, fileName);
 
         // Assert
-        Assert.NotEqual(hash1, hash2);
+        Assert.AreNotEqual(hash1, hash2);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_DifferentFileNameProducesDifferentHash()
     {
         // Arrange
@@ -151,10 +153,10 @@ public class ShortcutUploadControllerTests
         var hash2 = ShortcutUploadController.CalculateContentHash(stream2, "file2.txt");
 
         // Assert
-        Assert.NotEqual(hash1, hash2);
+        Assert.AreNotEqual(hash1, hash2);
     }
 
-    [Fact]
+    [TestMethod]
     public void CalculateContentHash_SameInputProducesSameHash()
     {
         // Arrange
@@ -168,6 +170,6 @@ public class ShortcutUploadControllerTests
         var hash2 = ShortcutUploadController.CalculateContentHash(stream2, fileName);
 
         // Assert
-        Assert.Equal(hash1, hash2);
+        Assert.AreEqual(hash1, hash2);
     }
 }
